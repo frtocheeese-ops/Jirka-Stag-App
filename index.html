@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<title>Hawkins Stag Op</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Special+Elite&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--c1:#111;--c2:#1a1a1a;--r:#e63946;--rg:#ff1744;--rd:#8b0000;--g:#00e676;--y:#ffd600;--o:#ff9100;--b:#448aff;--w:#e0e0e0;--wd:#888;--f1:'Bebas Neue',sans-serif;--f2:'Special Elite',cursive;--f3:'Share Tech Mono',monospace;--nh:60px;--sb:env(safe-area-inset-bottom,0px)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--w);font-family:var(--f2);font-size:15px;line-height:1.5;overflow-x:hidden;min-height:100dvh}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+@keyframes vhs{0%,100%{opacity:1}93%{opacity:.8}96%{opacity:.9}}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--rd);border-radius:2px}
+
+.app{padding-bottom:calc(var(--nh)+var(--sb)+8px)}
+.pg{display:none;padding:14px}.pg.on{display:block;animation:fi .3s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* NAV - scrollable */
+nav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--nh)+var(--sb));padding-bottom:var(--sb);background:linear-gradient(#111,#0a0a0a);border-top:1px solid #222;display:flex;overflow-x:auto;z-index:1000;-webkit-overflow-scrolling:touch}
+nav::-webkit-scrollbar{display:none}
+nav a{flex:0 0 auto;min-width:56px;padding:0 6px;background:none;border:none;color:var(--wd);font-family:var(--f3);font-size:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;text-decoration:none;position:relative;white-space:nowrap}
+nav a.on{color:var(--r)}
+nav a.on::before{content:'';position:absolute;top:0;left:10%;right:10%;height:2px;background:var(--r);box-shadow:0 0 6px var(--rg)}
+nav a .ni{font-size:18px}
+nav a span{text-transform:uppercase;letter-spacing:.5px}
+
+/* TYPO */
+.t1{font-family:var(--f1);font-size:28px;letter-spacing:2px;color:var(--r);text-shadow:0 0 15px rgba(230,57,70,.4);text-transform:uppercase}
+.t2{font-family:var(--f1);font-size:22px;letter-spacing:2px;color:var(--r);text-shadow:0 0 10px rgba(230,57,70,.3)}
+.t3{font-family:var(--f1);font-size:17px;letter-spacing:1px;color:var(--w)}
+.mn{font-family:var(--f3)}.dm{color:var(--wd)}
+
+/* CARD */
+.cd{background:var(--c1);border:1px solid #222;border-radius:8px;padding:14px;margin-bottom:10px;position:relative;overflow:hidden}
+.cd::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--r);box-shadow:0 0 6px var(--rg)}
+
+/* BTN */
+.bt{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--r);background:transparent;color:var(--r);font-family:var(--f1);font-size:14px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:4px;transition:all .2s}
+.bt:active{background:var(--r);color:#fff}
+.bs{background:var(--r);color:#fff}
+.bsm{padding:5px 10px;font-size:12px;letter-spacing:1px}
+.bbl{width:100%;justify-content:center}
+.bt:disabled{opacity:.3;pointer-events:none}
+
+/* PROGRESS */
+.pb{height:5px;background:#222;border-radius:3px;margin:8px 0;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--r),var(--rg));border-radius:3px;transition:width .5s}
+
+/* COUNTDOWN */
+.cdg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0}
+.cdu{text-align:center;background:var(--c1);border:1px solid #222;border-radius:6px;padding:8px 2px}
+.cdn{font-family:var(--f1);font-size:32px;color:var(--r);text-shadow:0 0 12px rgba(230,57,70,.4);line-height:1}
+.cdl{font-family:var(--f3);font-size:9px;color:var(--wd);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+/* LOGO */
+.logo{font-family:var(--f1);font-size:38px;letter-spacing:5px;color:var(--r);text-shadow:0 0 25px rgba(230,57,70,.5),0 0 50px rgba(230,57,70,.2);animation:vhs 4s infinite;line-height:1;text-align:center}
+.sub{font-family:var(--f3);font-size:10px;color:var(--wd);letter-spacing:3px;text-transform:uppercase;text-align:center;margin-top:3px}
+.badge{display:inline-flex;align-items:center;gap:5px;background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.25);border-radius:16px;padding:4px 12px;font-family:var(--f3);font-size:11px;color:var(--r);margin:4px 3px}
+
+/* QUEST */
+.qc{background:var(--c1);border:1px solid #222;border-radius:8px;padding:14px;margin-bottom:10px;position:relative;overflow:hidden}
+.qc.completed{border-color:var(--g)}.qc.completed::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--g)}
+.qc.active{border-color:var(--r)}.qc.active::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--r)}
+.qc.locked{opacity:.4}
+.qs{display:inline-block;font-family:var(--f3);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border-radius:3px;margin-bottom:6px}
+.sc{background:rgba(0,230,118,.12);color:var(--g);border:1px solid rgba(0,230,118,.25)}
+.sa{background:rgba(230,57,70,.12);color:var(--r);border:1px solid rgba(230,57,70,.25)}
+.sl{background:rgba(136,136,136,.12);color:var(--wd);border:1px solid rgba(136,136,136,.25)}
+
+/* ITINERARY */
+.dh{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--c1);border:1px solid #222;border-radius:6px;cursor:pointer;margin-bottom:6px}
+.dh:active{background:var(--c2)}
+.dh.op{border-radius:6px 6px 0 0;border-color:var(--rd)}
+.da{transition:transform .3s;color:var(--wd);font-size:12px}
+.dh.op .da{transform:rotate(180deg)}
+.dc{display:none;border:1px solid #222;border-top:none;border-radius:0 0 6px 6px;padding:10px;margin-bottom:6px}
+.dc.op{display:block}
+.ti{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a1a;font-size:13px}
+.ti:last-child{border:none}
+.dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+
+/* PLACES */
+.plc{display:flex;gap:10px;padding:10px;background:var(--c1);border:1px solid #222;border-radius:6px;margin-bottom:6px;align-items:center}
+.plc .emoji{font-size:20px;width:36px;text-align:center}
+.fc{padding:5px 12px;border:1px solid #333;border-radius:16px;font-family:var(--f3);font-size:10px;background:transparent;color:var(--wd);cursor:pointer;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.fc.on{border-color:var(--r);color:var(--r);background:rgba(230,57,70,.08)}
+
+/* MAP */
+.mw{width:100%;height:220px;border-radius:8px;overflow:hidden;border:1px solid #222;margin-bottom:6px;position:relative;touch-action:none;background:#1a1a1a}
+.mw img{position:absolute;image-rendering:auto}
+
+/* GALLERY */
+.gg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.gi{aspect-ratio:1;overflow:hidden;border-radius:3px;border:1px solid #222;cursor:pointer}
+.gi img{width:100%;height:100%;object-fit:cover}
+
+/* SPLIT */
+.exp-item{background:var(--c1);border:1px solid #222;border-radius:6px;padding:12px;margin-bottom:8px}
+.exp-amount{font-family:var(--f1);font-size:24px;color:var(--r)}
+.balance-card{background:var(--c1);border:1px solid var(--r);border-radius:8px;padding:14px;text-align:center;margin-bottom:10px}
+.balance-num{font-family:var(--f1);font-size:36px}
+.balance-pos{color:var(--g)}.balance-neg{color:var(--r)}
+
+/* AI */
+.aib{position:fixed;bottom:calc(var(--nh)+var(--sb)+12px);right:12px;width:48px;height:48px;border-radius:50%;background:var(--r);border:none;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 3px 15px rgba(230,57,70,.4);z-index:900;display:flex;align-items:center;justify-content:center}
+.aip{position:fixed;inset:0;background:var(--bg);z-index:2000;display:none;flex-direction:column}
+.aip.op{display:flex}
+.amsg{margin-bottom:10px;max-width:82%;padding:8px 12px;border-radius:10px;font-size:13px;line-height:1.4}
+.amu{background:var(--r);color:#fff;margin-left:auto;border-bottom-right-radius:3px}
+.amb{background:var(--c1);border:1px solid #222;border-bottom-left-radius:3px}
+
+/* OVERLAYS */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:6000;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:20px;overflow-y:auto}
+.ov.op{display:flex}
+
+/* LOGIN */
+.login{position:fixed;inset:0;background:var(--bg);z-index:5000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.login-input{font-family:var(--f3);font-size:16px;background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:12px 16px;color:var(--w);width:100%;max-width:280px;outline:none;margin:6px 0}
+.login-input:focus{border-color:var(--r)}
+
+/* INPUTS */
+input[type="text"],input[type="password"],input[type="number"],textarea,select{background:#1a1a1a;border:1px solid #333;border-radius:5px;padding:8px 12px;color:var(--w);font-family:var(--f2);font-size:13px;outline:none;width:100%}
+input:focus,textarea:focus,select:focus{border-color:var(--r)}
+textarea{resize:vertical;min-height:60px}
+select{appearance:none;cursor:pointer}
+
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--c1);border:1px solid var(--r);border-radius:6px;padding:10px 18px;font-family:var(--f3);font-size:12px;z-index:8000;transition:transform .4s;box-shadow:0 3px 15px rgba(230,57,70,.3)}
+.toast.sh{transform:translateX(-50%) translateY(0)}
+.eb{background:none;border:none;color:var(--wd);font-size:13px;cursor:pointer;padding:3px}
+.eb:active{color:var(--r)}
+.hidden{display:none!important}
+.tac{text-align:center}
+.mb8{margin-bottom:8px}
+.mt12{margin-top:12px}
+.flex{display:flex;gap:8px}
+.flex-1{flex:1}
+.fw{flex-wrap:wrap}
+.aic{align-items:center}
+.jcsb{justify-content:space-between}
+
+/* Accomm */
+.acc-detail{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1a1a;font-size:13px}
+.acc-detail:last-child{border:none}
+
+.gmap-link{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(68,138,255,.1);border:1px solid rgba(68,138,255,.3);border-radius:4px;color:var(--b);font-family:var(--f3);font-size:10px;text-decoration:none;margin-top:4px}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="login" id="loginScr">
+  <div class="logo" style="margin-bottom:4px;">HAWKINS</div>
+  <div class="sub" style="margin-bottom:28px;">— Stag Operation —</div>
+  <input type="text" class="login-input" id="loginUser" placeholder="Přihlašovací jméno" autocomplete="username" autocapitalize="off">
+  <input type="password" class="login-input" id="loginPw" placeholder="Heslo" autocomplete="current-password">
+  <label style="display:flex;align-items:center;gap:6px;margin:10px 0;cursor:pointer;">
+    <input type="checkbox" id="loginRemember" checked style="accent-color:var(--r);width:16px;height:16px;">
+    <span class="mn dm" style="font-size:11px;">Zapamatovat přihlášení</span>
+  </label>
+  <button class="bt bs bbl" style="max-width:280px;margin-top:8px;" onclick="doLogin()">PŘIHLÁSIT SE</button>
+  <button class="bt bsm" id="bioLoginBtn" style="margin-top:12px;display:none;border-color:var(--b);color:var(--b);" onclick="bioLogin()">🔐 Otisk / Face ID</button>
+  <div class="mn dm" style="font-size:11px;margin-top:16px;max-width:280px;" id="loginErr">&nbsp;</div>
+  <div class="mn dm" style="font-size:10px;margin-top:24px;opacity:.3;">v5.0 · Hawkins Stag Operation</div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div class="app" id="app" style="display:none;">
+
+  <!-- HQ -->
+  <div class="pg on" id="pgHQ">
+    <div class="logo" style="font-size:34px;">HAWKINS</div>
+    <div class="sub mb8" id="hqSub">Stag Operation</div>
+    <div class="cdg">
+      <div class="cdu"><div class="cdn" id="cD">--</div><div class="cdl">Dní</div></div>
+      <div class="cdu"><div class="cdn" id="cH">--</div><div class="cdl">Hodin</div></div>
+      <div class="cdu"><div class="cdn" id="cM">--</div><div class="cdl">Min</div></div>
+      <div class="cdu"><div class="cdn" id="cS">--</div><div class="cdl">Sek</div></div>
+    </div>
+    <div class="tac mb8"><div class="badge" id="hqUser">🕵️ Agent</div></div>
+    <div class="cd"><div class="t3 mb8">⚔️ QUEST PROGRESS</div><div class="pb"><div class="pf" id="hqPF"></div></div><div class="mn dm" style="font-size:10px;" id="hqPT">0/3</div></div>
+    <div class="cd"><div class="flex jcsb aic mb8"><div class="t3">📡 OZNÁMENÍ</div><span class="mn dm" style="font-size:10px;" id="nC">0</span></div><div id="nF" style="max-height:180px;overflow-y:auto;"><div class="mn dm tac" style="padding:16px;font-size:12px;">Žádná oznámení</div></div></div>
+    <div id="admNotif" class="hidden"><textarea id="nI" placeholder="Oznámení pro všechny..." rows="2" style="margin-bottom:6px;"></textarea><button class="bt bsm bs bbl" onclick="sendNotif()">📡 Odeslat</button></div>
+    <div class="flex mt12" style="justify-content:center;flex-wrap:wrap;gap:6px;">
+      <button class="bt bsm" id="hqSetBtn" class="hidden" onclick="openSet()">⚙️</button>
+      <button class="bt bsm" onclick="doLogout()" style="color:var(--wd);border-color:#333;">🚪 Odhlásit</button>
+      <button class="bt bsm" onclick="syncFromServer()" style="color:var(--wd);border-color:#333;">🔄 Sync</button>
+    </div>
+  </div>
+
+  <!-- FLIGHT -->
+  <div class="pg" id="pgFlight">
+    <div class="t1 tac mb8">✈️ LET</div>
+    <div id="flHidden" class="tac" style="padding:40px 0;">
+      <div style="font-size:48px;margin-bottom:12px;">🔒</div>
+      <div class="t2 mb8">PŘÍSTUP ZAMČEN</div>
+      <div class="mn dm" style="font-size:11px;">Letenky budou odhaleny organizátorem</div>
+      <button class="bt bs mt12 hidden" id="flRevBtn" onclick="revealFlight()">ODHALIT LETENKY</button>
+    </div>
+    <div id="flContent" class="hidden">
+      <div class="cd" style="border-color:var(--rd);">
+        <div style="background:linear-gradient(135deg,var(--rd),var(--r));margin:-14px -14px 12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;border-radius:6px 6px 0 0;">
+          <div><div style="font-family:var(--f1);font-size:18px;color:#fff;letter-spacing:2px;">PRAHA → LONDÝN</div><div class="mn" style="font-size:10px;color:rgba(255,255,255,.7);">Terminal 1 → Luton</div></div>
+          <div class="mn" style="font-size:13px;background:rgba(0,0,0,.3);padding:3px 8px;border-radius:3px;color:#fff;">EZY2374</div>
+        </div>
+        <div class="mn" style="font-size:12px;"><div class="flex jcsb" style="padding:4px 0;border-bottom:1px solid #1a1a1a"><span class="dm">Odlet</span><span>Pá 15.5.2026 · 16:55</span></div><div class="flex jcsb" style="padding:4px 0;border-bottom:1px solid #1a1a1a"><span class="dm">Přílet</span><span>Pá 15.5.2026 · 18:00</span></div><div class="flex jcsb" style="padding:4px 0;border-bottom:1px solid #1a1a1a"><span class="dm">Bag drop</span><span>14:55 – 16:15</span></div><div class="flex jcsb" style="padding:4px 0;"><span class="dm">Sraz</span><span style="color:var(--r);">14:30 na letišti</span></div></div>
+      </div>
+      <div class="t3 mb8">📦 Tvá palubní vstupenka</div>
+      <div id="myBoardingPass" class="cd tac" style="min-height:80px;">
+        <div class="mn dm" style="font-size:11px;">Nahraj svůj QR kód / boarding pass</div>
+        <label class="bt bsm mt12" style="cursor:pointer;">📷 Nahrát<input type="file" accept="image/*" style="display:none;" onchange="uploadBoardingPass(this)"></label>
+      </div>
+      <div class="mn dm tac" style="font-size:10px;margin-top:8px;">📦 Zavazadlo: max. 45×36×20 cm · pod sedadlo</div>
+    </div>
+  </div>
+
+  <!-- QUESTS -->
+  <div class="pg" id="pgQuests">
+    <div class="t1 tac mb8">⚔️ QUESTY</div>
+    <div class="mn dm tac" style="font-size:10px;margin-bottom:12px;" id="qLbl"></div>
+    <div id="questList"></div>
+    <div class="cd tac mt12" style="border-color:var(--y);background:linear-gradient(135deg,rgba(230,57,70,.08),rgba(255,214,0,.08));">
+      <div style="font-size:24px;">🏆</div>
+      <div style="font-family:var(--f1);font-size:24px;color:var(--y);text-shadow:0 0 15px rgba(255,214,0,.3);">GRAND PRIZE</div>
+      <div class="pb"><div class="pf" id="gpPF"></div></div>
+      <div class="mn" style="font-size:13px;" id="gpTxt"><span style="filter:blur(6px);user-select:none;">⚽ Chelsea vs Tottenham</span></div>
+    </div>
+  </div>
+
+  <!-- PLAN + ACCOMMODATION -->
+  <div class="pg" id="pgPlan">
+    <div class="t1 tac mb8">📋 PLÁN</div>
+    <div id="itineraryList"></div>
+    <div class="t2 mt12 mb8">🏠 UBYTOVÁNÍ</div>
+    <div class="cd" id="accCard">
+      <div class="acc-detail"><span class="dm">Adresa</span><span id="accAddr">Bude upřesněno</span></div>
+      <div class="acc-detail"><span class="dm">Check-in</span><span id="accCheckin">15:00</span></div>
+      <div class="acc-detail"><span class="dm">Check-out</span><span id="accCheckout">11:00</span></div>
+      <div class="acc-detail"><span class="dm">Snídaně</span><span id="accBreakfast">7:30 – 10:00</span></div>
+      <div class="acc-detail"><span class="dm">WiFi</span><span id="accWifi">Bude sděleno</span></div>
+      <div class="acc-detail"><span class="dm">Kontakt</span><span id="accContact">—</span></div>
+      <div class="acc-detail"><span class="dm">Poznámky</span><span id="accNotes">—</span></div>
+    </div>
+    <button class="bt bsm hidden" id="accEditBtn" onclick="openAccEdit()">✏️ Upravit ubytování</button>
+  </div>
+
+  <!-- PLACES -->
+  <div class="pg" id="pgPlaces">
+    <div class="t1 tac mb8">📍 MÍSTA</div>
+    <div class="mw" id="mapEl">
+      <div style="position:absolute;bottom:8px;right:8px;z-index:5;display:flex;gap:4px;">
+        <button class="bt bsm" onclick="locMe()" style="font-size:10px;">📍 Kde jsem</button>
+        <button class="bt bsm" onclick="mapZ(1)" style="font-size:10px;">＋</button>
+        <button class="bt bsm" onclick="mapZ(-1)" style="font-size:10px;">－</button>
+      </div>
+    </div>
+    <div class="flex" style="overflow-x:auto;padding:4px 0;gap:5px;margin-bottom:6px;" id="filterRow"></div>
+    <div id="plList"></div>
+  </div>
+
+  <!-- GALLERY -->
+  <div class="pg" id="pgGallery">
+    <div class="t1 tac mb8">📸 GALERIE</div>
+    <label class="bt bs bbl mb8" style="cursor:pointer;font-size:13px;">📷 VYFOTIT & NAHRÁT<input type="file" accept="image/*" capture="environment" style="display:none;" onchange="upDrive(this)"></label>
+    <div class="flex mb8"><button class="bt bsm bbl" onclick="loadDrivePhotos()">🔄 Obnovit</button><a href="https://drive.google.com/drive/folders/1NCBOOv06bjCtlw64E6qkaHIdM0RVpkJU" target="_blank" class="bt bsm bbl" style="text-decoration:none;color:var(--wd);border-color:#333;">📁 Drive</a></div>
+    <div class="gg" id="galG"><div class="mn dm tac" style="grid-column:1/-1;padding:30px 0;font-size:12px;">Klikni 🔄 pro načtení</div></div>
+  </div>
+
+  <!-- SPLIT $ (hidden from groom) -->
+  <div class="pg" id="pgSplit">
+    <div class="t1 tac mb8">💰 SPLIT</div>
+    <div class="balance-card" id="myBalance"><div class="mn dm" style="font-size:10px;">TVŮJ ZŮSTATEK</div><div class="balance-num balance-pos" id="myBalNum">0 Kč</div><div class="mn dm" style="font-size:10px;">k zaplacení organizátorovi</div></div>
+    <div class="hidden" id="splitAdmin">
+      <div class="flex mb8"><button class="bt bsm bs bbl" onclick="openExpenseCreate()">+ Nový výdaj</button></div>
+      <div class="cd mb8"><div class="t3 mb8">💳 Účet organizátora</div><div class="mn dm" style="font-size:11px;" id="orgAccount">Nenastaveno</div><button class="bt bsm mt12" onclick="openOrgAccount()">✏️ Nastavit účet</button></div>
+    </div>
+    <div class="t3 mb8">📝 Výdaje</div>
+    <div id="expenseList"><div class="mn dm tac" style="padding:16px;font-size:12px;">Zatím žádné výdaje</div></div>
+  </div>
+</div>
+
+<!-- Gallery overlay -->
+<div class="ov" id="galOv" style="z-index:4000;"><button style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--w);font-size:28px;cursor:pointer;" onclick="$('galOv').classList.remove('op')">✕</button><img id="galImg" style="max-width:100%;max-height:80vh;border-radius:6px;border:2px solid var(--rd);"><div class="mn dm tac mt12" style="font-size:10px;" id="galTm"></div></div>
+
+<!-- AI Chat -->
+<button class="aib" id="aiBtn" style="display:none;" onclick="openAI()">🤖</button>
+<div class="aip" id="aiP">
+  <div class="flex aic jcsb" style="padding:10px 14px;border-bottom:1px solid #222;background:var(--c1);"><div><div class="t3">🤖 AI Průvodce</div><div class="mn dm" style="font-size:9px;">Londýn · česky</div></div><button style="background:none;border:none;color:var(--w);font-size:22px;cursor:pointer;" onclick="closeAI()">✕</button></div>
+  <div style="flex:1;overflow-y:auto;padding:12px;" id="aiM"><div class="amsg amb">Ahoj! Jsem váš průvodce Londýnem 🇬🇧</div></div>
+  <div class="flex" style="padding:8px 12px;gap:4px;overflow-x:auto;">
+    <button class="bt bsm" style="font-size:10px;white-space:nowrap;" onclick="aiQ('Nejlevnější pub poblíž')">🍺 Pub</button>
+    <button class="bt bsm" style="font-size:10px;white-space:nowrap;" onclick="aiQ('Taxi pro skupinu')">🚕 Taxi</button>
+    <button class="bt bsm" style="font-size:10px;white-space:nowrap;" onclick="aiQ('Co dělat v dešti')">🌧️</button>
+  </div>
+  <div class="flex" style="padding:8px 12px;padding-bottom:calc(8px+var(--sb));border-top:1px solid #222;background:var(--c1);"><input type="text" id="aiIn" placeholder="Napiš dotaz..." style="flex:1;border-radius:16px;padding:8px 14px;font-size:13px;" onkeydown="if(event.key==='Enter')sendAI()"><button class="bt bs" style="border-radius:50%;width:36px;height:36px;padding:0;min-width:36px;" onclick="sendAI()">➤</button></div>
+</div>
+
+<!-- Settings overlay -->
+<div class="ov" id="setOv"><div style="max-width:360px;width:100%;text-align:left;">
+  <div class="t2 tac mb8">⚙️ NASTAVENÍ</div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">CLAUDE API KLÍČ</label><input type="password" id="sKey" placeholder="sk-ant-..."></div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">SPRÁVA UŽIVATELŮ</label><div id="userMgmt" class="mn" style="font-size:11px;"></div></div>
+  <div class="flex mt12"><button class="bt bsm bbl" onclick="closeSet()">Zrušit</button><button class="bt bsm bs bbl" onclick="saveSet()">Uložit</button></div>
+  <div class="tac mt12"><button class="bt bsm" style="color:var(--wd);border-color:#333;font-size:10px;" onclick="resetAll()">🗑️ Reset</button></div>
+</div></div>
+
+<!-- Expense create overlay -->
+<div class="ov" id="expOv"><div style="max-width:360px;width:100%;text-align:left;">
+  <div class="t2 tac mb8">💰 NOVÝ VÝDAJ</div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">POPIS</label><input type="text" id="expDesc" placeholder="Uber, jídlo, vstupenky..."></div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">ČÁSTKA (Kč)</label><input type="number" id="expAmount" placeholder="0"></div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">KDO PLATÍ</label><div id="expUsers"></div></div>
+  <div class="flex mt12"><button class="bt bsm bbl" onclick="$('expOv').classList.remove('op')">Zrušit</button><button class="bt bsm bs bbl" onclick="saveExpense()">Přidat</button></div>
+</div></div>
+
+<!-- Accommodation edit overlay -->
+<div class="ov" id="accOv"><div style="max-width:360px;width:100%;text-align:left;">
+  <div class="t2 tac mb8">🏠 UBYTOVÁNÍ</div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">ADRESA</label><input type="text" id="eAccAddr"></div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">CHECK-IN</label><input type="text" id="eAccIn"></div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">CHECK-OUT</label><input type="text" id="eAccOut"></div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">SNÍDANĚ</label><input type="text" id="eAccBr"></div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">WIFI HESLO</label><input type="text" id="eAccWifi"></div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">KONTAKT</label><input type="text" id="eAccCont"></div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">POZNÁMKY</label><textarea id="eAccNotes" rows="2"></textarea></div>
+  <div class="flex mt12"><button class="bt bsm bbl" onclick="$('accOv').classList.remove('op')">Zrušit</button><button class="bt bsm bs bbl" onclick="saveAcc()">Uložit</button></div>
+</div></div>
+
+<!-- Quest edit overlay -->
+<div class="ov" id="qOv"><div style="max-width:360px;width:100%;text-align:left;">
+  <div class="t2 tac mb8">✏️ QUEST</div>
+  <input type="hidden" id="qEI">
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">NÁZEV</label><input type="text" id="qET"></div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">ZADÁNÍ</label><textarea id="qED" rows="2"></textarea></div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">ODMĚNA</label><input type="text" id="qER"></div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">ODMĚNA VIDITELNÁ?</label><select id="qEV"><option value="1">Ano</option><option value="0">Ne — skrytá</option></select></div>
+  <div class="flex mt12"><button class="bt bsm bbl" onclick="$('qOv').classList.remove('op')">Zrušit</button><button class="bt bsm bs bbl" onclick="saveQuest()">Uložit</button></div>
+</div></div>
+
+<!-- Org account overlay -->
+<div class="ov" id="orgOv"><div style="max-width:360px;width:100%;text-align:left;">
+  <div class="t2 tac mb8">💳 ÚČET</div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">ČÍSLO ÚČTU / IBAN</label><input type="text" id="orgIban" placeholder="CZ..."></div>
+  <div class="mb8"><label class="mn dm" style="font-size:10px;">JMÉNO MAJITELE</label><input type="text" id="orgName"></div>
+  <div class="flex mt12"><button class="bt bsm bbl" onclick="$('orgOv').classList.remove('op')">Zrušit</button><button class="bt bsm bs bbl" onclick="saveOrgAcc()">Uložit</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<!-- NAV -->
+<nav id="nav" style="display:none;"></nav>
+
+<script>
+const $=id=>document.getElementById(id);
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbycqJ1NZX-9JxWFG1-kf13rivGIntX4BZzkMDAX5yG3IFN15W2LJsFMnvoLm91KqFeDLw/exec';
+const GAPI='AIzaSyCa4-MYbXPFQPKpRV2UbyVr0bnPcKnmR9o';
+const DRIVE_FOLDER='1NCBOOv06bjCtlw64E6qkaHIdM0RVpkJU';
+
+// ===== SHARED CONFIG (synced via Apps Script backend) =====
+let CFG={
+  users:[
+    {id:'zenich',name:'Jirka',role:'groom',pw:'1234'},
+    {id:'agent',name:'Agent',role:'agent',pw:'5678'},
+    {id:'admin',name:'Patrik',role:'admin',pw:'0000'}
+  ],
+  apiKey:'',
+  flightRevealed:false,
+  quests:[
+    {title:'QUEST #1: Sbal si kufr',desc:'Sbal si kufr bez tušení, kam letíš.',reward:'První pivo za nás!',status:'completed',rewardVisible:true},
+    {title:'QUEST #2: Pub Challenge',desc:'Dej pint cizinci v pubu a vyfoť důkaz.',reward:'Odhalení tajné aktivity',status:'active',rewardVisible:true},
+    {title:'QUEST #3: ???',desc:'Bude odhaleno po Quest #2',reward:'Zatím tajné',status:'locked',rewardVisible:false}
+  ],
+  notifs:[],polls:[],expenses:[],
+  orgAccount:{iban:'',name:''},
+  accommodation:{addr:'Bude upřesněno',checkin:'15:00',checkout:'11:00',breakfast:'7:30 – 10:00',wifi:'Bude sděleno',contact:'—',notes:'—'},
+  places:[
+    {n:'Wetherspoons',t:'pub',pr:'£3.50',pt:3.5,a:'All over London',e:'🍺',la:51.5124,ln:-0.0901},
+    {n:"Sam Smith's",t:'pub',pr:'£3.80',pt:3.8,a:'Bermondsey',e:'🍺',la:51.4977,ln:-0.0681},
+    {n:'The Worlds End',t:'pub',pr:'£5.20',pt:5.2,a:'Camden',e:'🍺',la:51.5393,ln:-0.1427},
+    {n:'The Churchill Arms',t:'pub',pr:'£5.80',pt:5.8,a:'Kensington',e:'🍺',la:51.5068,ln:-0.1943},
+    {n:'Ye Olde Cheshire Cheese',t:'pub',pr:'£6.00',pt:6.0,a:'Fleet Street',e:'🍺',la:51.5142,ln:-0.1073},
+    {n:'Toby Carvery',t:'food',pr:'£10–15',pt:null,a:'Various',e:'🍖',la:51.5155,ln:-0.0922},
+    {n:'Honest Burgers',t:'food',pr:'£12–16',pt:null,a:'Various',e:'🍔',la:51.5137,ln:-0.1319},
+    {n:'Brick Lane Curry',t:'food',pr:'£8–14',pt:null,a:'Brick Lane',e:'🍛',la:51.5215,ln:-0.0717},
+    {n:'Stamford Bridge',t:'activity',pr:'⚽',pt:null,a:'Fulham',e:'⚽',la:51.4816,ln:-0.1909},
+    {n:'Camden Market',t:'activity',pr:'Free',pt:null,a:'Camden',e:'🛍️',la:51.5414,ln:-0.1462},
+    {n:'The Shard',t:'activity',pr:'£25',pt:null,a:'London Bridge',e:'🏙️',la:51.5045,ln:-0.0865},
+    {n:'Ministry of Sound',t:'club',pr:'£15–25',pt:null,a:'Elephant & Castle',e:'🎶',la:51.4943,ln:-0.0997},
+    {n:'Fabric',t:'club',pr:'£20–30',pt:null,a:'Farringdon',e:'🎧',la:51.5198,ln:-0.1025},
+    {n:'XOYO',t:'club',pr:'£10–20',pt:null,a:'Shoreditch',e:'🌙',la:51.5265,ln:-0.0809}
+  ],
+  itinerary:[
+    {day:'PÁ 15.5.',label:'Přílet',items:[
+      {time:'14:30',cat:'transport',name:'Sraz na letišti',detail:'Praha, T1'},
+      {time:'16:55',cat:'transport',name:'Let EZY2374',detail:'Praha → Luton'},
+      {time:'18:00',cat:'transport',name:'Přílet',detail:'Luton → ubytování'},
+      {time:'20:00',cat:'pub',name:'První puby',detail:'🍺'}
+    ]},
+    {day:'SO 16.5.',label:'Hlavní program',items:[
+      {time:'10:00',cat:'food',name:'Full English Breakfast',detail:''},
+      {time:'13:00',cat:'secret',name:'🔒 Zamčeno',detail:'Splň Quest #2',unlock:'quest2'},
+      {time:'16:00',cat:'pub',name:'Pub Crawl',detail:'Tour'},
+      {time:'20:00',cat:'food',name:'Dinner',detail:''},
+      {time:'22:00',cat:'night',name:'Night Out',detail:'🌙'}
+    ]},
+    {day:'NE 17.5.',label:'Grand Finale',items:[
+      {time:'10:00',cat:'food',name:'Brunch',detail:''},
+      {time:'15:00',cat:'secret',name:'🔒 Grand Prize',detail:'Splň všechny questy',unlock:'all'},
+      {time:'22:00',cat:'pub',name:'Poslední večer',detail:'🥂'}
+    ]},
+    {day:'PO 18.5.',label:'Návrat',items:[
+      {time:'TBD',cat:'transport',name:'Odlet do Prahy',detail:''}
+    ]}
+  ]
+};
+
+// Local session
+let ME={uid:null,role:null,boardingPass:null,bioId:null};
+
+// ===== STORAGE =====
+async function syncToServer(){
+  try{await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'saveConfig',config:CFG})});}catch(e){console.warn('Sync failed',e);}
+}
+async function syncFromServer(){
+  try{
+    toast('Synchronizuji...');
+    const r=await fetch(SCRIPT_URL+'?t='+Date.now());
+    const d=await r.json();
+    if(d&&d.users){CFG={...CFG,...d};refreshAll();toast('Synchronizováno ✓');}
+    else if(!d.error){toast('Žádná data na serveru, používám lokální');}
+    else{toast('Sync chyba: '+d.error);}
+  }catch(e){toast('Offline — lokální data');console.warn(e);}
+}
+function saveME(){try{localStorage.setItem('hso_me',JSON.stringify(ME));}catch(e){}}
+function loadME(){try{const d=localStorage.getItem('hso_me');if(d)ME={...ME,...JSON.parse(d)};}catch(e){}}
+
+// ===== INIT =====
+async function init(){
+  loadME();
+  await syncFromServer();
+  if(ME.uid){
+    const u=CFG.users.find(x=>x.id===ME.uid);
+    if(u){ME.role=u.role;enterApp();return;}
+  }
+  // Check bio
+  if(ME.bioId)$('bioLoginBtn').style.display='';
+}
+
+// ===== LOGIN =====
+function doLogin(){
+  const uid=$('loginUser').value.trim().toLowerCase();
+  const pw=$('loginPw').value;
+  const u=CFG.users.find(x=>x.id===uid&&x.pw===pw);
+  if(!u){$('loginErr').textContent='Nesprávné jméno nebo heslo';setTimeout(()=>$('loginErr').innerHTML='&nbsp;',3000);return;}
+  ME.uid=u.id;ME.role=u.role;
+  if($('loginRemember').checked){saveME();offerBio();}
+  enterApp();
+}
+function doLogout(){ME.uid=null;ME.role=null;ME.bioId=null;saveME();location.reload();}
+
+async function offerBio(){
+  if(!window.PublicKeyCredential)return;
+  const ok=await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(()=>false);
+  if(!ok)return;
+  if(!confirm('Příště se přihlásit otiskem / Face ID?'))return;
+  try{
+    const id=new Uint8Array(16);crypto.getRandomValues(id);
+    const cred=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:'Hawkins'},user:{id,name:ME.uid,displayName:ME.uid},pubKeyCredParams:[{alg:-7,type:'public-key'}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},timeout:60000}});
+    if(cred){ME.bioId=Array.from(new Uint8Array(cred.rawId));saveME();toast('Biometrie uložena ✓');}
+  }catch(e){}
+}
+
+async function bioLogin(){
+  if(!ME.bioId||!ME.uid)return;
+  try{
+    const cred=await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),allowCredentials:[{id:new Uint8Array(ME.bioId),type:'public-key',transports:['internal']}],userVerification:'required',timeout:60000}});
+    if(cred){const u=CFG.users.find(x=>x.id===ME.uid);if(u){ME.role=u.role;enterApp();}}
+  }catch(e){toast('Biometrie selhala');}
+}
+
+// ===== ENTER APP =====
+function enterApp(){
+  $('loginScr').style.display='none';
+  $('app').style.display='';
+  $('nav').style.display='';
+  $('aiBtn').style.display='';
+  const isAdm=ME.role==='admin',isGr=ME.role==='groom';
+  const u=CFG.users.find(x=>x.id===ME.uid);
+  $('hqUser').textContent=(isGr?'🎩':isAdm?'🔑':'🕵️')+' '+(u?u.name:ME.uid);
+  $('hqSub').textContent=isGr?'Stag Operation':'Stag Operation — Londýn 2026';
+  $('hqSetBtn').style.display=isAdm?'':'none';
+  $('admNotif').className=isAdm?'':'hidden';
+  $('flRevBtn').className=isAdm?'bt bs mt12':'bt bs mt12 hidden';
+  $('accEditBtn').className=isAdm?'bt bsm':'bt bsm hidden';
+  $('splitAdmin').className=isAdm?'':'hidden';
+  buildNav();refreshAll();startCD();
+}
+
+function buildNav(){
+  const isGr=ME.role==='groom';
+  const tabs=[
+    {id:'HQ',icon:'🏠',label:'HQ'},
+    {id:'Flight',icon:'✈️',label:'Let'},
+    {id:'Quests',icon:'⚔️',label:'Questy'},
+    {id:'Plan',icon:'📋',label:'Plán'},
+    {id:'Places',icon:'📍',label:'Místa'},
+    {id:'Gallery',icon:'📸',label:'Galerie'},
+  ];
+  if(!isGr)tabs.push({id:'Split',icon:'💰',label:'Split'});
+  $('nav').innerHTML=tabs.map((t,i)=>
+    `<a class="${i===0?'on':''}" onclick="goTo('${t.id}',this)" ${(!CFG.flightRevealed&&t.id==='Flight'&&isGr)?'style="display:none;" data-flighttab="1"':''}><div class="ni">${t.icon}</div><span>${t.label}</span></a>`
+  ).join('');
+}
+
+function refreshAll(){
+  updFlight();updQuests();updItinerary();updAccomm();updPlaces();updNotifs();updExpenses();updPolls();
+}
+
+function goTo(p,el){
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
+  $('pg'+p).classList.add('on');
+  document.querySelectorAll('nav a').forEach(x=>x.classList.remove('on'));
+  if(el)el.classList.add('on');
+  if(p==='Places')setTimeout(renderMap,100);
+}
+
+// ===== COUNTDOWN =====
+function startCD(){
+  const t=new Date('2026-05-15T16:55:00+02:00').getTime();
+  const tk=()=>{const d=Math.max(0,t-Date.now());$('cD').textContent=Math.floor(d/864e5);$('cH').textContent=Math.floor(d%864e5/36e5);$('cM').textContent=Math.floor(d%36e5/6e4);$('cS').textContent=Math.floor(d%6e4/1e3);};
+  tk();setInterval(tk,1000);
+}
+
+// ===== FLIGHT =====
+function updFlight(){
+  const rev=CFG.flightRevealed,isGr=ME.role==='groom';
+  $('flHidden').style.display=(!rev&&isGr)?'':'none';
+  $('flContent').className=(!rev&&isGr)?'hidden':'';
+  // Show/hide flight tab for groom
+  const ftab=document.querySelector('[data-flighttab]');
+  if(ftab)ftab.style.display=(rev||!isGr)?'':'none';
+  // Boarding pass
+  if(ME.boardingPass){
+    $('myBoardingPass').innerHTML=`<img src="${ME.boardingPass}" style="max-width:100%;border-radius:6px;border:1px solid #333;">`;
+  }
+}
+function revealFlight(){CFG.flightRevealed=true;syncToServer();updFlight();buildNav();toast('Letenky odhaleny ✓');}
+function uploadBoardingPass(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{ME.boardingPass=e.target.result;saveME();updFlight();toast('Boarding pass uložen ✓');};
+  r.readAsDataURL(f);inp.value='';
+}
+
+// ===== QUESTS =====
+function updQuests(){
+  const q=CFG.quests,done=q.filter(x=>x.status==='completed').length,pct=Math.round(done/q.length*100);
+  $('hqPF').style.width=pct+'%';$('hqPT').textContent=`${done}/${q.length} splněno`;
+  $('gpPF').style.width=pct+'%';
+  const allDone=done===q.length;
+  $('gpTxt').innerHTML=allDone?'⚽ Chelsea vs Tottenham · Stamford Bridge · Neděle 17.5.':'<span style="filter:blur(6px);user-select:none;">⚽ Chelsea vs Tottenham</span>';
+  const isAdm=ME.role==='admin',isGr=ME.role==='groom';
+  $('qLbl').textContent=isGr?'Tvé questy — splň je všechny!':isAdm?'Správa questů':'Sleduj ženichův postup';
+  $('questList').innerHTML=q.map((x,i)=>{
+    const sc=x.status==='completed'?'sc':x.status==='active'?'sa':'sl';
+    const stxt=x.status==='completed'?'✓ Splněno':x.status==='active'?'● Aktivní':'🔒 Zamčeno';
+    const showReward=x.rewardVisible||isAdm;
+    return `<div class="qc ${x.status}">
+      <div class="flex jcsb aic"><div class="qs ${sc}">${stxt}</div>${isAdm?`<button class="eb" onclick="openQEdit(${i})">✏️</button>`:''}</div>
+      <div style="font-family:var(--f1);font-size:18px;margin:4px 0;">${x.title}</div>
+      <div style="font-size:12px;color:var(--wd);margin-bottom:8px;" ${x.status==='locked'&&!isAdm?'style="filter:blur(3px)"':''}>${x.desc}</div>
+      <div class="flex aic" style="font-family:var(--f3);font-size:11px;padding:6px 10px;background:rgba(255,214,0,.06);border:1px solid rgba(255,214,0,.15);border-radius:4px;">
+        <span>🎁</span><span ${!showReward?'style="filter:blur(6px);user-select:none"':''}>Odměna: ${showReward?x.reward:'████████'}</span>
+      </div>
+      ${isAdm&&x.status==='active'?`<button class="bt bsm bs bbl mt12" onclick="approveQ(${i})">✓ Schválit</button>`:''}
+    </div>`;
+  }).join('');
+}
+function approveQ(i){CFG.quests[i].status='completed';if(i<CFG.quests.length-1&&CFG.quests[i+1].status==='locked')CFG.quests[i+1].status='active';syncToServer();updQuests();toast('Schváleno ✓');}
+function openQEdit(i){$('qEI').value=i;$('qET').value=CFG.quests[i].title;$('qED').value=CFG.quests[i].desc;$('qER').value=CFG.quests[i].reward;$('qEV').value=CFG.quests[i].rewardVisible?'1':'0';$('qOv').classList.add('op');}
+function saveQuest(){const i=+$('qEI').value;CFG.quests[i].title=$('qET').value;CFG.quests[i].desc=$('qED').value;CFG.quests[i].reward=$('qER').value;CFG.quests[i].rewardVisible=$('qEV').value==='1';syncToServer();$('qOv').classList.remove('op');updQuests();toast('Uloženo ✓');}
+
+// ===== ITINERARY =====
+function updItinerary(){
+  const catCol={pub:'var(--o)',food:'var(--g)',activity:'var(--b)',transport:'var(--wd)',night:'var(--r)',secret:'var(--y)'};
+  const isAdm=ME.role==='admin';
+  const done=CFG.quests.filter(x=>x.status==='completed').length;
+  const allDone=done===CFG.quests.length;
+  $('itineraryList').innerHTML=CFG.itinerary.map((day,di)=>`
+    <div class="dh${di===0?' op':''}" onclick="this.classList.toggle('op');this.nextElementSibling.classList.toggle('op')">
+      <div><div style="font-family:var(--f1);font-size:16px;">${day.day} — DEN ${di+1}</div><div class="mn dm" style="font-size:9px;">${day.label}</div></div>
+      <span class="da">▼</span>
+    </div>
+    <div class="dc${di===0?' op':''}">
+      ${day.items.map(it=>{
+        let locked=false,unlocked=false;
+        if(it.unlock==='quest2')unlocked=CFG.quests[1]?.status==='completed';
+        else if(it.unlock==='all')unlocked=allDone;
+        else unlocked=true;
+        if(it.unlock&&!unlocked&&!isAdm)locked=true;
+        return `<div class="ti"><div class="mn dm" style="font-size:11px;min-width:40px;">${it.time}</div><div class="dot" style="background:${catCol[it.cat]||'var(--wd)'};box-shadow:0 0 4px ${catCol[it.cat]||'var(--wd)'};"></div><div style="flex:1;"><div style="font-family:var(--f1);font-size:14px;${locked?'color:var(--y)':''}">${locked?'🔒 Zamčeno':it.name}</div><div class="mn dm" style="font-size:10px;">${locked?it.detail:it.detail}</div></div></div>`;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+// ===== ACCOMMODATION =====
+function updAccomm(){
+  const a=CFG.accommodation;
+  $('accAddr').textContent=a.addr;$('accCheckin').textContent=a.checkin;$('accCheckout').textContent=a.checkout;
+  $('accBreakfast').textContent=a.breakfast;$('accWifi').textContent=a.wifi;$('accContact').textContent=a.contact;$('accNotes').textContent=a.notes;
+}
+function openAccEdit(){const a=CFG.accommodation;$('eAccAddr').value=a.addr;$('eAccIn').value=a.checkin;$('eAccOut').value=a.checkout;$('eAccBr').value=a.breakfast;$('eAccWifi').value=a.wifi;$('eAccCont').value=a.contact;$('eAccNotes').value=a.notes;$('accOv').classList.add('op');}
+function saveAcc(){CFG.accommodation={addr:$('eAccAddr').value,checkin:$('eAccIn').value,checkout:$('eAccOut').value,breakfast:$('eAccBr').value,wifi:$('eAccWifi').value,contact:$('eAccCont').value,notes:$('eAccNotes').value};syncToServer();$('accOv').classList.remove('op');updAccomm();toast('Ubytování uloženo ✓');}
+
+// ===== PLACES & MAP =====
+let myLoc=null,curFil='all',mapS={cx:0,cy:0,z:13};
+const TS=256;
+function ll2px(la,ln,z){const n=Math.pow(2,z)*TS;return[(ln+180)/360*n,(1-Math.log(Math.tan(la*Math.PI/180)+1/Math.cos(la*Math.PI/180))/Math.PI)/2*n];}
+function dist(a,b){const R=6371,dLat=(b[0]-a[0])*Math.PI/180,dLon=(b[1]-a[1])*Math.PI/180,x=Math.sin(dLat/2)**2+Math.cos(a[0]*Math.PI/180)*Math.cos(b[0]*Math.PI/180)*Math.sin(dLon/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
+
+function initMap(){const[cx,cy]=ll2px(51.509,-0.118,mapS.z);mapS.cx=cx;mapS.cy=cy;const el=$('mapEl');
+  el.addEventListener('touchstart',e=>{if(e.touches.length===1){e.preventDefault();mapS.drag=true;mapS.sx=e.touches[0].clientX;mapS.sy=e.touches[0].clientY;mapS.scx=mapS.cx;mapS.scy=mapS.cy;}},{passive:false});
+  el.addEventListener('touchmove',e=>{if(mapS.drag&&e.touches.length===1){e.preventDefault();mapS.cx=mapS.scx-(e.touches[0].clientX-mapS.sx);mapS.cy=mapS.scy-(e.touches[0].clientY-mapS.sy);renderMap();}},{passive:false});
+  el.addEventListener('touchend',()=>{mapS.drag=false;});
+  el.addEventListener('mousedown',e=>{e.preventDefault();mapS.drag=true;mapS.sx=e.clientX;mapS.sy=e.clientY;mapS.scx=mapS.cx;mapS.scy=mapS.cy;});
+  document.addEventListener('mousemove',e=>{if(mapS.drag){mapS.cx=mapS.scx-(e.clientX-mapS.sx);mapS.cy=mapS.scy-(e.clientY-mapS.sy);renderMap();}});
+  document.addEventListener('mouseup',()=>{mapS.drag=false;});
+  renderMap();
+}
+
+function renderMap(){
+  const el=$('mapEl');if(!el)return;const w=el.offsetWidth,h=el.offsetHeight,z=mapS.z,cx=mapS.cx,cy=mapS.cy;
+  el.querySelectorAll('.mt,.mk,.mpp').forEach(x=>x.remove());
+  const tx0=Math.floor((cx-w/2)/TS),ty0=Math.floor((cy-h/2)/TS),tx1=Math.ceil((cx+w/2)/TS),ty1=Math.ceil((cy+h/2)/TS),maxT=Math.pow(2,z);
+  for(let tx=tx0;tx<=tx1;tx++)for(let ty=ty0;ty<=ty1;ty++){if(ty<0||ty>=maxT)continue;const img=document.createElement('img');img.className='mt';img.src=`https://tile.openstreetmap.org/${z}/${((tx%maxT)+maxT)%maxT}/${ty}.png`;img.style.cssText=`left:${tx*TS-cx+w/2}px;top:${ty*TS-cy+h/2}px;width:${TS}px;height:${TS}px;filter:brightness(.7) invert(1) contrast(2.5) hue-rotate(200deg) saturate(.3) brightness(.8);`;img.draggable=false;img.onerror=()=>img.style.display='none';el.appendChild(img);}
+  const pubs=CFG.places.filter(p=>p.pt),cheap=pubs.length?pubs.reduce((a,b)=>b.pt<a.pt?b:a,pubs[0]):null;
+  const fil=curFil==='all'?CFG.places:CFG.places.filter(p=>p.t===curFil);
+  fil.forEach(p=>{const[px,py]=ll2px(p.la,p.ln,z);const sx=px-cx+w/2,sy=py-cy+h/2;if(sx<-20||sx>w+20||sy<-20||sy>h+20)return;const isC=cheap&&p.pt===cheap.pt;const col={pub:'#ff9100',food:'#00e676',activity:'#448aff',club:'#e63946'}[p.t]||'#e63946';const mk=document.createElement('div');mk.className='mk';mk.style.cssText=`position:absolute;z-index:4;left:${sx-12}px;top:${sy-12}px;width:24px;height:24px;border-radius:50%;background:${isC?'#00e676':col};border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,.4);cursor:pointer;`;mk.textContent=p.e;mk.onclick=()=>{toast(p.n+' · '+p.pr);};el.appendChild(mk);});
+  if(myLoc){const[mx,my]=ll2px(myLoc[0],myLoc[1],z);const sx=mx-cx+w/2,sy=my-cy+h/2;const ml=document.createElement('div');ml.className='mk';ml.style.cssText=`position:absolute;z-index:5;left:${sx-7}px;top:${sy-7}px;width:14px;height:14px;background:var(--b);border:3px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(68,138,255,.5);`;el.appendChild(ml);}
+}
+function mapZ(d){const nz=Math.max(10,Math.min(17,mapS.z+d));if(nz===mapS.z)return;const r=Math.pow(2,nz-mapS.z);mapS.cx*=r;mapS.cy*=r;mapS.z=nz;renderMap();}
+function locMe(){if(!navigator.geolocation){toast('Geolokace nedostupná');return;}toast('Hledám...');navigator.geolocation.getCurrentPosition(p=>{myLoc=[p.coords.latitude,p.coords.longitude];const[px,py]=ll2px(myLoc[0],myLoc[1],mapS.z);mapS.cx=px;mapS.cy=py;renderMap();updPlaces();toast('Poloha nalezena ✓');},()=>toast('Nelze zjistit'),{enableHighAccuracy:true,timeout:10000});}
+function flyTo(la,ln){const pb=document.querySelectorAll('nav a')[4];goTo('Places',pb);setTimeout(()=>{mapS.z=15;const[px,py]=ll2px(la,ln,15);mapS.cx=px;mapS.cy=py;renderMap();},150);}
+
+function updPlaces(){
+  const types=[{k:'all',l:'Vše'},{k:'pub',l:'🍺 Puby'},{k:'food',l:'🍖 Jídlo'},{k:'activity',l:'⚡'},{k:'club',l:'🌙'}];
+  $('filterRow').innerHTML=types.map(t=>`<button class="fc${curFil===t.k?' on':''}" onclick="curFil='${t.k}';updPlaces();renderMap();">${t.l}</button>`).join('');
+  let list=curFil==='all'?[...CFG.places]:CFG.places.filter(p=>p.t===curFil);
+  if(myLoc)list.sort((a,b)=>dist(myLoc,[a.la,a.ln])-dist(myLoc,[b.la,b.ln]));
+  const pubs=CFG.places.filter(p=>p.pt),cheap=pubs.length?pubs.reduce((a,b)=>b.pt<a.pt?b:a,pubs[0]):null;
+  $('plList').innerHTML=list.map(p=>{
+    const isC=cheap&&p.pt===cheap.pt;
+    const d=myLoc?dist(myLoc,[p.la,p.ln]):null;
+    const dTxt=d!==null?(d<1?(d*1000).toFixed(0)+'m':d.toFixed(1)+'km'):'';
+    return `<div class="plc" onclick="flyTo(${p.la},${p.ln})">
+      <div class="emoji">${p.e}</div>
+      <div style="flex:1;"><div style="font-family:var(--f1);font-size:14px;">${p.n}</div><div class="mn dm" style="font-size:10px;">${p.a}${dTxt?' · '+dTxt:''}</div></div>
+      <div style="text-align:right;"><div class="mn" style="font-size:13px;font-weight:bold;${isC?'color:var(--g)':''}">${p.pr}${isC?' 🏆':''}</div>
+      <a href="https://www.google.com/maps/search/?api=1&query=${p.la},${p.ln}" target="_blank" class="gmap-link" onclick="event.stopPropagation();">Maps ↗</a></div>
+    </div>`;
+  }).join('');
+}
+
+// ===== NOTIFICATIONS =====
+function updNotifs(){const n=CFG.notifs||[];$('nC').textContent=n.length;$('nF').innerHTML=n.length?n.slice().reverse().map(x=>`<div style="padding:8px 0;border-bottom:1px solid #1a1a1a;font-size:12px;"><div>${x.t}</div><div class="mn dm" style="font-size:9px;">${x.d}</div></div>`).join(''):'<div class="mn dm tac" style="padding:16px;font-size:12px;">Žádná oznámení</div>';}
+function sendNotif(){const t=$('nI').value.trim();if(!t)return;CFG.notifs.push({t,d:new Date().toLocaleString('cs-CZ',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})});syncToServer();$('nI').value='';updNotifs();toast('Odesláno ✓');}
+
+// ===== POLLS =====
+function updPolls(){}
+
+// ===== SPLIT $ =====
+function updExpenses(){
+  if(ME.role==='groom')return;
+  const exps=CFG.expenses||[];
+  // Calc my balance
+  let myTotal=0;
+  exps.forEach(ex=>{if(ex.users.includes(ME.uid))myTotal+=ex.perPerson;});
+  $('myBalNum').textContent=myTotal.toFixed(0)+' Kč';
+  $('myBalNum').className='balance-num '+(myTotal>0?'balance-neg':'balance-pos');
+  // Org account
+  if(CFG.orgAccount.iban)$('orgAccount').textContent=CFG.orgAccount.name+' · '+CFG.orgAccount.iban;
+  // List
+  $('expenseList').innerHTML=exps.length?exps.slice().reverse().map(ex=>`<div class="exp-item"><div class="flex jcsb aic"><div class="exp-amount">${ex.amount} Kč</div><div class="mn dm" style="font-size:10px;">${ex.date}</div></div><div style="font-size:13px;margin:4px 0;">${ex.desc}</div><div class="mn dm" style="font-size:10px;">Na osobu: ${ex.perPerson.toFixed(0)} Kč · ${ex.users.length} lidí</div></div>`).join(''):'<div class="mn dm tac" style="padding:16px;font-size:12px;">Zatím žádné výdaje</div>';
+}
+function openExpenseCreate(){
+  $('expDesc').value='';$('expAmount').value='';
+  const nonGroom=CFG.users.filter(u=>u.role!=='groom');
+  $('expUsers').innerHTML=nonGroom.map(u=>`<label class="flex aic" style="padding:4px 0;gap:6px;cursor:pointer;"><input type="checkbox" checked value="${u.id}" class="expUserCb" style="accent-color:var(--r);width:16px;height:16px;"><span class="mn" style="font-size:12px;">${u.name}</span></label>`).join('');
+  $('expOv').classList.add('op');
+}
+function saveExpense(){
+  const desc=$('expDesc').value.trim(),amount=parseFloat($('expAmount').value);
+  if(!desc||!amount){toast('Vyplň popis a částku');return;}
+  const users=[...document.querySelectorAll('.expUserCb:checked')].map(x=>x.value);
+  if(!users.length){toast('Vyber alespoň 1 osobu');return;}
+  CFG.expenses.push({desc,amount,users,perPerson:amount/users.length,date:new Date().toLocaleString('cs-CZ',{day:'numeric',month:'numeric'})});
+  syncToServer();$('expOv').classList.remove('op');updExpenses();toast('Výdaj přidán ✓');
+}
+function openOrgAccount(){$('orgIban').value=CFG.orgAccount.iban||'';$('orgName').value=CFG.orgAccount.name||'';$('orgOv').classList.add('op');}
+function saveOrgAcc(){CFG.orgAccount={iban:$('orgIban').value,name:$('orgName').value};syncToServer();$('orgOv').classList.remove('op');updExpenses();toast('Účet uložen ✓');}
+
+// ===== GALLERY =====
+let drivePhotos=[];
+async function loadDrivePhotos(){
+  toast('Načítám...');
+  try{const r=await fetch(`https://www.googleapis.com/drive/v3/files?q='${DRIVE_FOLDER}'+in+parents+and+mimeType+contains+'image/'&key=${GAPI}&fields=files(id,name,createdTime)&orderBy=createdTime+desc&pageSize=100`);const d=await r.json();if(d.error){toast('Chyba: '+d.error.message);return;}drivePhotos=(d.files||[]).map(f=>({id:f.id,name:f.name,time:f.createdTime?new Date(f.createdTime).toLocaleString('cs-CZ',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'}):'',thumb:`https://drive.google.com/thumbnail?id=${f.id}&sz=w400`,full:`https://drive.google.com/thumbnail?id=${f.id}&sz=w1200`}));renGal();toast(`${drivePhotos.length} fotek ✓`);}catch(e){toast('Chyba spojení');}
+}
+function renGal(){const g=$('galG');if(!drivePhotos.length){g.innerHTML='<div class="mn dm tac" style="grid-column:1/-1;padding:30px 0;font-size:12px;">Žádné fotky</div>';return;}g.innerHTML=drivePhotos.map((x,i)=>`<div class="gi" onclick="opPh(${i})"><img src="${x.thumb}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`).join('');}
+function opPh(i){$('galImg').src=drivePhotos[i].full;$('galTm').textContent=drivePhotos[i].name+' · '+drivePhotos[i].time;$('galOv').classList.add('op');}
+async function upDrive(inp){const f=inp.files[0];if(!f)return;toast('Nahrávám...');const reader=new FileReader();reader.onload=async e=>{const img=new Image();img.onload=async()=>{const cv=document.createElement('canvas');const mx=1200;let w=img.width,h=img.height;if(w>mx||h>mx){if(w>h){h=h*mx/w;w=mx;}else{w=w*mx/h;h=mx;}}cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);const b64=cv.toDataURL('image/jpeg',.85).split(',')[1];try{const ts=new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({image:b64,filename:`stag_${ts}.jpg`,mimeType:'image/jpeg'})});toast('Nahrána ✓');setTimeout(loadDrivePhotos,1500);}catch(err){toast('Chyba uploadu');}};img.src=e.target.result;};reader.readAsDataURL(f);inp.value='';}
+
+// ===== AI CHAT =====
+function openAI(){$('aiP').classList.add('op');$('aiBtn').style.display='none';}
+function closeAI(){$('aiP').classList.remove('op');$('aiBtn').style.display='';}
+function aiQ(t){$('aiIn').value=t;sendAI();}
+async function sendAI(){const inp=$('aiIn'),t=inp.value.trim();if(!t)return;inp.value='';const m=$('aiM');const u=document.createElement('div');u.className='amsg amu';u.textContent=t;m.appendChild(u);const b=document.createElement('div');b.className='amsg amb';b.innerHTML='<span class="mn dm">...</span>';m.appendChild(b);m.scrollTop=m.scrollHeight;if(!CFG.apiKey){b.textContent='Nastav Claude API klíč v ⚙️ Nastavení.';return;}try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'Jsi AI průvodce pro českou skupinu v Londýně (15.–18.5.2026). Česky, stručně. Znáš puby, dopravu, jídlo, noční život. ~4-8 lidí.',messages:[{role:'user',content:t}]})});const d=await r.json();b.textContent=d.content?.map(c=>c.text||'').join('')||'Chyba.';}catch(e){b.textContent='Chyba spojení.';}m.scrollTop=m.scrollHeight;}
+
+// ===== SETTINGS =====
+function openSet(){$('sKey').value=CFG.apiKey||'';$('userMgmt').innerHTML=CFG.users.map(u=>`<div class="flex jcsb aic" style="padding:4px 0;border-bottom:1px solid #1a1a1a;"><span>${u.name} (${u.role})</span><span class="dm">${u.id} / ${u.pw}</span></div>`).join('');$('setOv').classList.add('op');}
+function closeSet(){$('setOv').classList.remove('op');}
+function saveSet(){CFG.apiKey=$('sKey').value||'';syncToServer();closeSet();toast('Uloženo ✓');}
+async function resetAll(){if(confirm('Reset?')){localStorage.clear();try{await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'saveConfig',config:{}})});}catch(e){}location.reload();}}
+
+// ===== TOAST =====
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('sh');setTimeout(()=>e.classList.remove('sh'),3000);}
+
+// ===== PWA =====
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+// ===== AUTO-REFRESH =====
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ME.uid)syncFromServer();});
+
+// ===== START =====
+init();
+</script>
+</body>
+</html>
